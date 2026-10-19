@@ -1,16 +1,16 @@
 # iOS云端构建与Ubuntu USB安装
 
-日期：2026-10-19。设备：iPhone 15 Pro / iOS 26.7.1。用户已授权先做所有不依赖接线的准备。
+更新：2026-10-20。设备：iPhone 15 Pro / iOS 26.7.1。用户已授权先做所有不依赖接线的准备。
 
 ## 已完成与待完成
 
 | 环节 | 当前状态 |
 | --- | --- |
 | Flutter自动连接 | 已实现并通过测试；私人安装包首次启动读取配置，写入Keychain；新包的有效配置可以覆盖旧配置 |
-| 公开源码准备 | 已排除私有目录、Wi-Fi/设备凭据头文件和个人安装包；测试图片已换为程序生成的图案 |
+| 公开源码准备 | 已排除私有目录、Wi-Fi/设备凭据头文件和个人安装包；测试图片已换为程序生成的图案，已建立本地Git提交 |
 | Actions工作流 | 已写入`.github/workflows/ios.yml`；Linux检查通过后在macos-15/Xcode26.2构建Flutter3.38.10 Release |
 | IPA打包、下载、注入 | 已实现；通过归档内容、摘要、权限、符号链接、错误配置与篡改测试 |
-| GitHub授权、发布、首次云端构建 | 等待用户完成GitHub浏览器授权，尚未推送或产出真实iOS IPA |
+| GitHub授权、发布、首次云端构建 | 首次浏览器授权码已过期，尚未获得授权；用户方便时重新生成短码。尚未推送或产出真实iOS IPA |
 | Ubuntu安装环境 | 已安装官方iloader2.3.10、usbmuxd及libimobiledevice工具；动态库齐全；USB服务已启动 |
 | iPhone安装、Keychain、HEIC、实际刷新 | 等待接线；当前没有连接iPhone，不能记为已通过 |
 | 公网HTTPS/MQTTS | 服务内部正常；办公室Ubuntu直连443 TLS超时，尚待核实实例防火墙/安全组与办公室路由 |
@@ -97,6 +97,6 @@ flutter analyze
 flutter test --reporter expanded
 ```
 
-本地结果：15项Python测试、8项Flutter测试通过，静态检查无问题。这些覆盖源码和本地打包流程，不代替macOS构建、iPhone签名安装或公网刷新验收。
+本地结果：15项Python测试、8项Flutter测试通过，静态检查无问题。另从仅包含公开提交的干净工作区重新执行以上检查，也全部通过；119个跟踪文件通过本机凭据扫描及发布路径检查。这些覆盖源码和本地打包流程，不代替macOS构建、iPhone签名安装或公网刷新验收。
 
 iloader官方Deb下载摘要已与GitHub发布资产digest一致：`3a616475a619751336d2a1bf9762bf5050bbe984d121b5e414eab917515130b2`。重新安装工具时仍应从[官方发布页](https://github.com/nab138/iloader/releases/tag/v2.3.10)下载对应架构。
