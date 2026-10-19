@@ -10,10 +10,10 @@
 | 公开源码准备 | 已排除私有目录、Wi-Fi/设备凭据头文件和个人安装包；测试图片已换为程序生成的图案，已建立本地Git提交 |
 | Actions工作流 | 已写入`.github/workflows/ios.yml`；Linux检查通过后在macos-15/Xcode26.2构建Flutter3.38.10 Release |
 | IPA打包、下载、注入 | 已实现；通过归档内容、摘要、权限、符号链接、错误配置与篡改测试 |
-| GitHub授权、发布、首次云端构建 | 首次浏览器授权码已过期，尚未获得授权；用户方便时重新生成短码。尚未推送或产出真实iOS IPA |
+| GitHub授权、发布、首次云端构建 | 已成功授权oceanfree-apple，公开仓库已创建，开始首次云端构建；尚未产出真实iOS IPA |
 | Ubuntu安装环境 | 已安装官方iloader2.3.10、usbmuxd及libimobiledevice工具；动态库齐全；USB服务已启动 |
 | iPhone安装、Keychain、HEIC、实际刷新 | 等待接线；当前没有连接iPhone，不能记为已通过 |
-| 公网HTTPS/MQTTS | 服务内部正常；办公室Ubuntu直连443 TLS超时，尚待核实实例防火墙/安全组与办公室路由 |
+| 公网HTTPS/MQTTS | 用户保存安全组规则后，公网HTTPS健康检查及鉴权查询成功，8883 TLS证书验证成功，ESP公网在线 |
 
 ## 接线前的构建与配置
 

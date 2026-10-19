@@ -42,7 +42,7 @@
 
 ## 待验收
 
-- 腾讯云入站TCP443/8883放通后的公网直连（包括ESP独立重连、手机蜂窝网络）。
+- 公网图像下载与真实刷屏、手机Wi-Fi/蜂窝网络；2026-10-20的HTTPS鉴权查询、MQTTS证书验证和ESP公网在线已通过。
 - 红米安装、系统选图器、EXIF/透明/大图、多指手势、前后台恢复、真实耗时及App到屏幕全流程；当前`adb devices`为空。
 - macOS/Xcode构建签名、iPhone相册/HEIC、Keychain、TLS、手势、预览与实际刷屏。
 - 真正断电发生于刷屏中、面板BUSY故障等破坏性硬件场景未制造；当前依赖代码状态机与服务端异常测试，不声称已经实机覆盖。
@@ -60,3 +60,9 @@
 - 安装及续签步骤见[iOS构建与USB安装](ios-installation.md)。明日接线后再验收iPhone15Pro/iOS26.7.1的相册、HEIC、Keychain、TLS、手势和手机发起的摄像头闭环。
 
 2026-10-20凌晨补记：仅从公开提交检出的干净工作区重跑15项Python测试、8项Flutter测试及静态检查，均通过；公开集合119个文件通过发布检查。iloader在当前Ubuntu桌面成功显示窗口，未进行Apple登录。首次GitHub设备码到期，当前仍未取得账号授权，仓库尚未推送、未生成真实iOS IPA；已请求用户方便时重新进行浏览器授权。
+
+## 2026-10-20：GitHub授权和公网恢复
+
+GitHub设备授权完成，并以`GET /user`确认登录为`oceanfree-apple`；已创建公开仓库`oceanfree-apple/esp_elink_mvp`，开始首次CI构建。Apple凭据不参与该流程。
+
+腾讯云实例元数据确认为广州CVM `ins-jn8457i8`。用户保存443/8883入站安全组规则后，Ubuntu直接访问公网IP，`/health`返回`ok=true,mqtt_connected=true`，App鉴权查询返回`online=true,busy=false`；8883通过项目CA及主机名验证、建立TLS1.3。以上未使用SSH转发，表明安全组修改后的公网服务连接与ESP在线已恢复。实际图像下载刷屏及手机闭环尚待单独测试。

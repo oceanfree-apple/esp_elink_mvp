@@ -38,3 +38,7 @@ python3 tools/cloud_check.py
 只有公网HTTPS健康检查、鉴权查询和ESP通过公网MQTTS上线都正常，才记为公网通过。此前SSH访问与服务器内部HTTPS检查正常，办公室Ubuntu直连TLS超时且服务器未收到对应流量；这只能定位到应用外的网络路径，不能仅据此断定安全组是唯一原因。
 
 若设置后仍不通，可使用[实例端口验通](https://cloud.tencent.com/document/product/215/38836)检查入站TCP443、TCP8883，随后结合服务器抓包、Ubuntu网络路径排查。`python3 tools/cloud_check.py --ssh`仅用于检查云内服务，不代替公网验证。
+
+## 2026-10-20验证结果
+
+用户保存两条入站允许规则后，从办公室Ubuntu直接访问公网IP：HTTPS443的项目CA验证、`/health`与App鉴权查询均成功，MQTTS8883完成TLS1.3及证书验证，API显示ESP在线且不忙。测试未使用SSH转发。图像实际下载刷屏、iPhone操作和手机蜂窝网络另行记录。
