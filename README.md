@@ -6,7 +6,7 @@ Flutter App 选图、缩放/拖动/任意角度旋转、固定 5:3 裁剪，点�
 
 - Android：`artifacts/mojian-android.apk`，个人密钥签名的 release 包，支持 ARM32/ARM64、Android 7/API24 及以上；已预置本人的云端地址和访问令牌，**只供私人分发**。红米尚未连接，本次不能声称已在红米实测。
 - iOS：与安卓共用代码；已实现首次启动自动连接、GitHub Actions未签名Release构建、本地IPA下载核验及私有配置注入。GitHub浏览器授权已成功，公开仓库已创建，开始首次云端构建；iPhone未接线，签名安装和真机测试尚未完成。
-- 云端：已通过 `ssh tencent` 部署 HTTPS API、MQTTS、SQLite 和服务自启动。2026-10-20放通安全组后，公网443健康检查、鉴权查询、8883证书验证及ESP公网在线均已通过；手机网络与真实刷新仍需分别验收。
+- 云端：已通过 `ssh tencent` 部署 HTTPS API、MQTTS、SQLite 和服务自启动。2026-10-20放通安全组后，公网443/8883、ESP在线及公网脚本刷屏均通过，耗时约35秒、串口CRC一致；摄像头当前画面全黑，实物核对和手机操作仍待验收。
 - 硬件：通过临时 SSH 转发完成了真实“上传 → MQTT → HTTPS 下载 → 完整性校验 → 刷新 → 成功回报”，约33秒；已用摄像头核对画面。该路径不代表公网直连已验收。
 
 确认方案见[MVP方案](docs/mvp-plan.md)及[iPhone免费自测计划](docs/ios-free-testing-plan.md)。实际操作见[iOS构建与USB安装](docs/ios-installation.md)，实测与未验证项见[验证记录](docs/verification.md)，接口及部署见[接口与运维](docs/operations.md)。

@@ -41,4 +41,4 @@ python3 tools/cloud_check.py
 
 ## 2026-10-20验证结果
 
-用户保存两条入站允许规则后，从办公室Ubuntu直接访问公网IP：HTTPS443的项目CA验证、`/health`与App鉴权查询均成功，MQTTS8883完成TLS1.3及证书验证，API显示ESP在线且不忙。测试未使用SSH转发。图像实际下载刷屏、iPhone操作和手机蜂窝网络另行记录。
+用户保存两条入站允许规则后，从办公室Ubuntu直接访问公网IP：HTTPS443的项目CA验证、`/health`与App鉴权查询均成功，MQTTS8883完成TLS1.3及证书验证，API显示ESP在线且不忙。随后公网脚本上传192000字节图像并刷新，34.77秒收到设备成功回报，UART为done且整图CRC一致。测试未使用SSH转发。摄像头全黑，实物核对、iPhone操作和手机蜂窝网络另行验收；任务及证据见[验证记录](verification.md)。

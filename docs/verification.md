@@ -42,7 +42,7 @@
 
 ## 待验收
 
-- 公网图像下载与真实刷屏、手机Wi-Fi/蜂窝网络；2026-10-20的HTTPS鉴权查询、MQTTS证书验证和ESP公网在线已通过。
+- 公网刷屏实物核对、手机Wi-Fi/蜂窝网络及手机实际操作；2026-10-20已通过公网HTTPS/MQTTS、脚本触发驱动刷新及串口CRC验证，摄像头全黑尚不能目视确认。
 - 红米安装、系统选图器、EXIF/透明/大图、多指手势、前后台恢复、真实耗时及App到屏幕全流程；当前`adb devices`为空。
 - macOS/Xcode构建签名、iPhone相册/HEIC、Keychain、TLS、手势、预览与实际刷屏。
 - 真正断电发生于刷屏中、面板BUSY故障等破坏性硬件场景未制造；当前依赖代码状态机与服务端异常测试，不声称已经实机覆盖。
@@ -66,3 +66,19 @@
 GitHub设备授权完成，并以`GET /user`确认登录为`oceanfree-apple`；已创建公开仓库`oceanfree-apple/esp_elink_mvp`，开始首次CI构建。Apple凭据不参与该流程。
 
 腾讯云实例元数据确认为广州CVM `ins-jn8457i8`。用户保存443/8883入站安全组规则后，Ubuntu直接访问公网IP，`/health`返回`ok=true,mqtt_connected=true`，App鉴权查询返回`online=true,busy=false`；8883通过项目CA及主机名验证、建立TLS1.3。以上未使用SSH转发，表明安全组修改后的公网服务连接与ESP在线已恢复。实际图像下载刷屏及手机闭环尚待单独测试。
+
+随后完成一次公网脚本刷新，使用程序生成的合成图案：
+
+| 项目 | 结果 |
+| --- | --- |
+| 任务 | 09738f8f3bbce986adb2c63fcb20e6e3 |
+| 图像 | 6783d30a0135dbefb7216ddb39ba8410，192000字节 |
+| SHA-256 | e75ad68686e2d52b643b0b4b78a63c5ce389b4d04d8f3763bca291e7c751ac82 |
+| 状态与耗时 | created → dispatched → refreshing → succeeded，34.77秒 |
+| UART | state=done，received=192000，crc=d06c94f7，cloud=connected，cloud_error=0 |
+| 传输 | 公网直连，无SSH/LAN转发；最终公网固件成功执行 |
+| 摄像头 | 前后照片均几乎全黑，延长采集等待后仍无法识别面板内容，不能判定实际画面对应 |
+
+本地证据：`artifacts/public-20261020/`包含frame.bin、preview.png、refresh.jsonl、uart-status.txt、manifest.json、before.jpg和after.jpg。后续恢复照明/取景后再核对屏幕，并由iPhone实际发起另一任务验收。
+
+首次iOS云端构建：[39284834109](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)，对应源码提交`d4a854ea9e70053d3a33d6bbaca9f18ec43fe914`。触发后处于queued，尚无运行器和构建产物；[GitHub官方状态页](https://www.githubstatus.com/)同时报告Actions、Pages和Webhooks服务降级（事件始于2026-10-19 15:49 UTC，北京时间23:49），可能导致本次排队延迟。该状态不代表检查或macOS构建已通过。
