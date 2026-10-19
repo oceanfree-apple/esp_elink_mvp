@@ -6,6 +6,8 @@ App → HTTPS443 → Nginx → FastAPI（127.0.0.1:8000）→ Mosquitto（内部
 
 `ssh tencent` 当前指向 `42.194.237.249`。服务器配置在 `/etc/elink/`，代码及 venv 在 `/opt/elink/`，SQLite 与图像在 `/var/lib/elink/`。服务为 `elink-api`、`mosquitto`、`nginx`。凭据文件600权限，MQTT密钥仅对所需服务组可读。
 
+已从实例元数据确认这是广州地域CVM，实例`ins-jn8457i8`；控制台应修改实例绑定的安全组入站规则。逐步操作见[公网端口设置](cloud-access.md)。
+
 本地私有配置 `.private/settings.json` 是生成与部署源；CA私钥、服务端私钥、Android签名密钥及密码也在 `.private/`。CA公钥证书位于 `mobile/assets/cloud_ca.pem` 与 `firmware/main/cloud_ca.pem`，服务器证书含公网IP SAN，ESP使用SNTP校时并校验名称、证书链及有效期。
 
 SNTP配置了腾讯、阿里与pool.ntp.org三个时间源，避免单个时间服务失效时一直等候。未获得可信证书校验所需时间前显示`cloud=waiting_time`，不会跳过TLS时间校验。
