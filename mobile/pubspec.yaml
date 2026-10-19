@@ -1,0 +1,24 @@
+name: elink_frame
+description: Personal six-color e-paper photo frame.
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: ^3.10.0
+dependencies:
+  flutter:
+    sdk: flutter
+  image_picker: 1.2.1
+  flutter_secure_storage: 9.2.4
+  http: 1.6.0
+  crypto: 3.0.7
+  image: 4.7.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  image_picker_platform_interface: 2.11.1
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/cloud_ca.pem
+    - assets/connection.json

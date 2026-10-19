@@ -1,0 +1,98 @@
+name: iOS unsigned release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'server/**'
+      - 'tools/**'
+      - '.github/workflows/ios.yml'
+      - '.gitignore'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - 'server/**'
+      - 'tools/**'
+      - '.github/workflows/ios.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Verify public checkout
+        run: python3 tools/check_public.py
+      - name: Python tests
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -r server/requirements.txt
+          .venv/bin/python -m pytest server/tests tools/tests -q
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch 3.38.10 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Flutter checks
+        working-directory: mobile
+        run: |
+          flutter config --no-analytics
+          flutter pub get --enforce-lockfile
+          flutter analyze
+          flutter test --reporter expanded
+
+  build:
+    if: github.event_name != 'pull_request'
+    needs: checks
+    runs-on: macos-15
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Select Xcode 26.2
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_26.2.app/Contents/Developer
+          xcodebuild -version
+      - name: Install Flutter 3.38.10
+        run: |
+          git clone --depth 1 --branch 3.38.10 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Verify public checkout
+        run: python3 tools/check_public.py
+      - name: Build unsigned device application
+        working-directory: mobile
+        run: |
+          flutter config --no-analytics
+          flutter --version
+          flutter pub get --enforce-lockfile
+          flutter build ios --release --no-codesign --build-number="$GITHUB_RUN_NUMBER"
+      - name: Package and inspect public IPA
+        run: |
+          python3 tools/pack_ios.py --app mobile/build/ios/iphoneos/Runner.app --output artifacts/ios/mojian-unsigned.ipa
+          xcodebuild -version > artifacts/ios/toolchain.txt
+          flutter --version >> artifacts/ios/toolchain.txt
+      - name: Remove old iOS artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/clean_ios_artifacts.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ios-unsigned
+          path: artifacts/ios/
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 0

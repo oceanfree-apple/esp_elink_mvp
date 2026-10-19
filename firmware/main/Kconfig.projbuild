@@ -1,0 +1,46 @@
+menu "EPD configuration"
+
+config GDEP_SPI_CLOCK_HZ
+    int "SPI clock (Hz)"
+    range 1000000 20000000
+    default 2000000
+
+config GDEP_PIN_MOSI
+    int "GPIO for SPI MOSI / DIN"
+    range 0 48
+    default 6
+
+config GDEP_PIN_SCLK
+    int "GPIO for SPI SCLK / CLK"
+    range 0 48
+    default 4
+
+config GDEP_PIN_CS
+    int "GPIO for CS"
+    range 0 48
+    default 7
+
+config GDEP_PIN_DC
+    int "GPIO for DC"
+    range 0 48
+    default 10
+
+config GDEP_PIN_RST
+    int "GPIO for RST"
+    range 0 48
+    default 9
+
+config GDEP_PIN_BUSY
+    int "GPIO for BUSY"
+    range 0 48
+    default 5
+
+config GDEP_BUSY_LEVEL_READY
+    bool "BUSY pin high means panel ready"
+    default y
+
+config GDEP_IGNORE_BUSY_TIMEOUT
+    bool "Ignore BUSY timeout for diagnostics"
+    default n
+
+endmenu
