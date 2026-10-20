@@ -8,12 +8,12 @@
 | --- | --- |
 | Flutter自动连接 | 已实现并通过测试；私人安装包首次启动读取配置，写入Keychain；新包的有效配置可以覆盖旧配置 |
 | 公开源码准备 | 已排除私有目录、Wi-Fi/设备凭据头文件和个人安装包；测试图片已换为程序生成的图案，已建立本地Git提交 |
-| Actions工作流 | 已写入`.github/workflows/ios.yml`；Linux检查通过后在macos-15/Xcode26.2构建Flutter3.38.10 Release |
-| IPA打包、下载、注入 | 已实现；通过归档内容、摘要、权限、符号链接、错误配置与篡改测试 |
-| GitHub授权、发布、首次云端构建 | 已成功授权oceanfree-apple并推送公开源码；[首次构建39284834109](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)已触发，等待GitHub运行器；尚未产出真实iOS IPA |
+| Actions工作流 | Linux检查与macos-15/Xcode26.2上的Flutter3.38.10 Release构建均成功 |
+| IPA打包、下载、注入 | 已生成真实自用IPA；产物ZIP摘要、IPA摘要、arm64/iPhoneOS、空公开配置、私人配置及资源/权限一致性验证通过 |
+| GitHub授权、发布、首次云端构建 | [首次构建39284834109](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，版本0.1.0（1），未签名IPA约6.5MiB，已保留本地 |
 | Ubuntu安装环境 | 已安装官方iloader2.3.10、usbmuxd及libimobiledevice工具；动态库齐全；USB服务已启动 |
 | iPhone安装、Keychain、HEIC、实际刷新 | 等待接线；当前没有连接iPhone，不能记为已通过 |
-| 公网HTTPS/MQTTS | HTTPS/MQTTS及ESP在线通过；公网脚本刷屏34.77秒成功，UART整图CRC一致；摄像头全黑，实物核对待补 |
+| 公网HTTPS/MQTTS | 公网脚本刷屏34.77秒成功，UART整图CRC一致；白天实拍与任务预览对应，iPhone实际发起的刷新待接线后验收 |
 
 ## 接线前的构建与配置
 
@@ -45,6 +45,18 @@ python3 tools/prepare_ios.py
 
 自用IPA不能上传到公开仓库、Actions或公开下载区。预处理不使用Apple账号；必须完成注入后再签名。
 
+## 当前可用于安装的版本
+
+- 版本：0.1.0（1），Bundle ID为`dev.elink.elinkFrame`，arm64真机Release，最低iOS13.0，SDK为iPhoneOS26.2。
+- 构建：`39284834109`，源码提交`d4a854ea9e70053d3a33d6bbaca9f18ec43fe914`。工具链实测为Xcode26.2（17C52）、Flutter3.38.10、Dart3.10.9。
+- 公开IPA：`artifacts/ios/mojian-unsigned.ipa`，6834406字节，SHA-256为`1ac04b7fd4b05555755bdf8587d8d71ba7aeea34847803232d2bdda2fac3f057`。
+- 已配置自用IPA：`.private/ios/mojian-configured.ipa`，6834472字节，权限600；已写入现有云端连接资料，尚未签名。
+- 本地校验记录：`artifacts/ios/local-verification.json`、`artifact-verification.json`及`toolchain.txt`；配置包摘要在`.private/ios/mojian-configured.json`。
+
+2026-10-20早上已完成实际下载和注入。昨晚的本地等待进程没有持续完成下载，今后从文件、摘要和工作流状态核实结果，不将启动等待进程等同于产物已准备。当前公开原包、自用IPA均保存在Ubuntu，不依赖远程产物保留期。
+
+当前接线时间待定，今天不进行Apple登录、配对或安装。需要接线时直接使用上述自用IPA；真正安装、独立启动、Keychain和iOS26.7.1兼容性仍待实机验证。
+
 ## iPhone接线后的安装
 
 1. 使用能传数据的USB线连接办公室Ubuntu，解锁手机，在手机上选择“信任此电脑”并输入手机锁屏密码。
@@ -60,7 +72,7 @@ python3 tools/prepare_ios.py
    ideviceinfo -k ProductVersion
    ```
 
-   无设备时先检查线材和USB口；服务未运行时用`sudo systemctl start usbmuxd`。今天没有iPhone，因此空列表属于预期情况，尚未验证配对。
+   无设备时先检查线材和USB口；服务未运行时用`sudo systemctl start usbmuxd`。目前尚未接线或验证配对。
 
 3. 在Ubuntu桌面启动`iloader`。由用户在其窗口中登录Apple账号，完成必要的双重认证，不将账号密码或验证码放入项目、命令行或Actions。选择导入自己的IPA，文件为`.private/ios/mojian-configured.ipa`。工具处理个人证书、描述文件、框架签名与USB安装。
 4. 按手机实际提示开启“设置 → 隐私与安全性 → 开发者模式”，可能需要重启；如出现开发者信任提示，在“设置 → 通用 → VPN与设备管理”完成信任。入口和提示以手机实际系统为准。
@@ -97,6 +109,6 @@ flutter analyze
 flutter test --reporter expanded
 ```
 
-本地结果：15项Python测试、8项Flutter测试通过，静态检查无问题。另从仅包含公开提交的干净工作区重新执行以上检查，也全部通过；119个跟踪文件通过本机凭据扫描及发布路径检查。这些覆盖源码和本地打包流程，不代替macOS构建、iPhone签名安装或公网刷新验收。
+本地15项Python测试、8项Flutter测试及静态检查通过，在干净公开检出和GitHub Linux任务中也均通过；GitHub macOS真机Release构建成功。真实IPA本地核对了GitHub产物摘要、IPA摘要、arm64/iPhoneOS标识、公开空配置、私人配置和其余文件/权限不变。这些不代替iPhone签名安装及手机实际操作验收。
 
 iloader官方Deb下载摘要已与GitHub发布资产digest一致：`3a616475a619751336d2a1bf9762bf5050bbe984d121b5e414eab917515130b2`。重新安装工具时仍应从[官方发布页](https://github.com/nab138/iloader/releases/tag/v2.3.10)下载对应架构。

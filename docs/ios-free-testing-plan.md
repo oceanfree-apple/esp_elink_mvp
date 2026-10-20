@@ -2,13 +2,13 @@
 
 更新：2026-10-20。本文替代原方案中“取得本地Mac后才能开始iPhone验收”的安排。
 
-用户已于2026-10-19确认实施，并授权先完成不需要iPhone连接的工作；iPhone将在次日连接办公室Ubuntu。安装与续签统一采用Ubuntu＋USB，不启用SideStore、无线侧载或TestFlight。实际进度与操作见[iOS构建与USB安装](ios-installation.md)。
+用户已于2026-10-19确认实施，并授权先完成不需要iPhone连接的工作；当前接线时间待定，签名安装将在iPhone实际USB连接后进行。安装与续签统一采用Ubuntu＋USB，不启用SideStore、无线侧载或TestFlight。实际进度与操作见[iOS构建与USB安装](ios-installation.md)。
 
 ## 0. 当前基础与最终体验
 
 已有基础：Flutter选图/编辑/抖动预览代码、Android release包、腾讯云API/MQTT服务、ESP联网及下载刷屏固件。此前已通过临时SSH转发完成真实云端刷屏和摄像头核对；这不代表iPhone或公网直连已经通过验收。
 
-2026-10-20进度：GitHub授权及公开仓库创建已完成；iOS CI、App自动连接及本地配置注入已实现，开始首次云端构建；公网443/8883及ESP在线验证已通过。待完成真实IPA构建、iPhone签名安装及实测、手机实际发起的摄像头闭环。实际记录见[安装说明](ios-installation.md)和[验证记录](verification.md)。
+2026-10-20进度：公开仓库和首次iOS云端Release构建已完成，已下载核验真实IPA并在Ubuntu写入私人连接配置；公网443/8883、脚本刷屏及白天摄像头核对均通过。待完成iPhone签名安装及实测、手机实际发起的摄像头闭环。实际记录见[安装说明](ios-installation.md)和[验证记录](verification.md)。
 
 最终用户体验：安装后的App首次打开即自动连接自己的相框；相册选图→双指缩放/拖动/任意角度旋转→固定5:3裁剪→确定生成六色抖动预览→点击刷新→查看结果。用户不填写服务器地址或令牌、不登录项目账户，日常使用不连接电脑。
 
@@ -79,7 +79,7 @@
 
 - `ssh tencent`正常；`elink-api`、`mosquitto`、`nginx`均为active。
 - 2026-10-20用户保存CVM入站安全组规则后，Ubuntu公网HTTPS443健康检查及鉴权查询成功、MQTTS8883证书验证通过，ESP恢复公网在线。
-- 公网图像下载与实际刷屏、手机Wi-Fi及蜂窝网络仍需分别验收。
+- 公网图像下载与脚本刷屏已通过，白天实拍对应预览；手机实际操作、Wi-Fi及蜂窝网络仍需分别验收。
 - 当前USB列表未发现iPhone；摄像头和ESP串口设备存在。
 
 在iPhone正式闭环前确认：手机可通过HTTPS连接API、ESP通过MQTTS在线且可HTTPS下载、App展示相框在线。手机可与屏幕处于不同网络；验收包含手机Wi-Fi和蜂窝网络，屏幕继续使用自己的Wi-Fi。

@@ -4,9 +4,11 @@
 
 整体实施补充方案：[iPhone免费自测计划](ios-free-testing-plan.md)。用户已确认实施：iPhone主力自测、GitHub免费macOS构建、Ubuntu本地自动注入连接配置后签名、USB安装和续签；不采用SideStore或无线安装。先完成不依赖iPhone连接的开发、发布和构建准备，实际安装及手机闭环等用户接线后进行。
 
+2026-10-20进度：iOS云端Release构建、IPA下载核验和本地私人配置包已完成；红米APK已同步共享代码并保留原签名；公网脚本刷屏、串口CRC及白天实拍核对通过。当前等待手机接线后进行签名安装与手机实际操作验收，详见[验证记录](verification.md)。
+
 ## 范围与硬件
 
-- Flutter 共用 Android/iOS 代码；iPhone15Pro（iOS26.7.1）改为主力自测机，红米保留安卓兼容性验收，移除Mate30。使用GitHub公开仓库的macOS/Xcode编译未签名IPA，Ubuntu本地免费个人签名后通过USB安装，不要求购买本地Mac。iOS仍需实际构建、签名及实机验证。
+- Flutter 共用 Android/iOS 代码；iPhone15Pro（iOS26.7.1）改为主力自测机，红米保留安卓兼容性验收，移除Mate30。GitHub公开仓库的macOS/Xcode未签名Release构建已通过，随后由Ubuntu本地免费个人签名并通过USB安装，不要求购买本地Mac。签名与实机验证仍待接线。
 - 个人单屏，不做账户注册、多屏、手机配网、图库、轮播或 OTA。
 - ESP32-S3，16MB PSRAM、32MB Flash；GDEP073E01，800×480，六色；沿用 esp_elink_uart 的驱动、接线、Wi-Fi 与串口协议。
 

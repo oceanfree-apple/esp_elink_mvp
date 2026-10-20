@@ -1,6 +1,6 @@
 # MVP 验证记录
 
-日期：2026-10-19。范围：红米Android、iPhone iOS共用工程；本轮未连接手机、无Mac。
+更新：2026-10-20。范围：红米Android、iPhone iOS共用工程；本地Ubuntu与GitHub macOS构建。尚未连接手机，真机安装及手机操作待验收。
 
 ## 已验证
 
@@ -13,13 +13,14 @@
 | 裁剪覆盖 | 三种宽高、每种500组随机旋转/缩放/位移，四角均在源图内 |
 | 算法参考 | 固定32×16 RGB输入，Burkes六色量化及打包与原Python逐字节一致 |
 | 预览一致性 | 800×480、192000字节、全部色码合法，PNG像素来自同一打包数据 |
-| Android构建 | debug和个人密钥签名release APK已构建；release约30.8MB，ARM32/64 |
+| Android构建 | 共享代码已同步构建个人签名release，30816383字节，Flutter运行时及AOT为ARM32/64，签名验证通过且证书保持一致 |
+| iOS构建 | GitHub Linux检查和macOS/Xcode26.2构建成功，arm64真机Release 0.1.0（1），已下载并注入私人配置，签名安装待接线 |
 | ESP构建/烧录 | ESP-IDF5.5.5通过，约889KB，4MiB factory分区；Wi-Fi连接成功 |
 | 服务器服务 | SSH正常，systemd三服务active；内部API与MQTT连接正常；HTTPS私有CA验证通过 |
-| 真实云端刷屏 | 下述SSH转发路径成功；已收到任务成功回报及UART整图CRC |
-| 目视核对 | 摄像头照片与发送预览中的人物、肩部、长发、樱花对应；面板竖放，因此需按物理方向理解画面 |
+| 真实云端刷屏 | 临时SSH与最终公网直连均成功；公网任务34.77秒，UART整图CRC一致 |
+| 目视核对 | 白天实拍的黄色圆形、绿色三角形、六色色块及边界与公网任务预览对应，面板物理竖放 |
 
-## 硬件链路记录
+## 2026-10-19：临时SSH链路记录
 
 公网443/8883流量未到达服务器，故临时将本机LAN端口14443/18883通过SSH转发到腾讯云HTTPS/MQTTS。ESP连接该LAN入口，TLS名称仍验证腾讯云IP，证书验证未关闭。该验证覆盖实际云端服务及实际面板，不覆盖公网端口连通性。
 
@@ -34,7 +35,7 @@
 - 正常结束后重启ESP，UART恢复为idle、RAM CRC归零；MQTT重新联网后仍回报同一已成功任务，云端成功时间保持不变，没有自动刷屏。证实NVS结果保留。
 - 最终固件重新生成并恢复公网URL，临时LAN转发仅用于验证，不作为正式运行依赖。
 - 最后重启时观察到单一SNTP时间源等候较久，已将固件改为三个备用时间源；本机分别验证三个服务均能返回时间。
-- 最后补充云端占用权保持至结果确认，以防串口在屏幕刚完成时抢先改变共享状态。该修正与时间源修正已重新构建、烧录并打包；以上完整刷屏记录来自此前测试，最终二进制未另做一次完整刷屏。
+- 最后补充云端占用权保持至结果确认，以防串口在屏幕刚完成时抢先改变共享状态。该修正与时间源修正已重新构建、烧录并打包；本节记录来自此前测试，修正后的最终二进制于2026-10-20完成下文的公网刷新。
 
 实拍：`artifacts/screen-snapshot-044.jpg`。面板颜色比电脑预览柔和；本次只核对内容、构图和可见边缘，未做仪器色差测量。界面截图`artifacts/app-editor.png`和`artifacts/app-preview.png`来自Flutter测试环境，非手机截图。
 
@@ -42,9 +43,9 @@
 
 ## 待验收
 
-- 公网刷屏实物核对、手机Wi-Fi/蜂窝网络及手机实际操作；2026-10-20已通过公网HTTPS/MQTTS、脚本触发驱动刷新及串口CRC验证，摄像头全黑尚不能目视确认。
+- 手机Wi-Fi/蜂窝网络及实际操作发起的刷新；公网脚本刷屏、UART与白天实物核对已通过。
 - 红米安装、系统选图器、EXIF/透明/大图、多指手势、前后台恢复、真实耗时及App到屏幕全流程；当前`adb devices`为空。
-- macOS/Xcode构建签名、iPhone相册/HEIC、Keychain、TLS、手势、预览与实际刷屏。
+- iPhone签名安装、相册/HEIC、Keychain、TLS、手势、预览与实际刷屏；macOS真机Release构建已通过。
 - 真正断电发生于刷屏中、面板BUSY故障等破坏性硬件场景未制造；当前依赖代码状态机与服务端异常测试，不声称已经实机覆盖。
 
 后续变更与额外硬件检查结果补记于本文末尾，避免将模拟/中转验证描述为公网或手机验收。
@@ -82,3 +83,25 @@ GitHub设备授权完成，并以`GET /user`确认登录为`oceanfree-apple`；�
 本地证据：`artifacts/public-20261020/`包含frame.bin、preview.png、refresh.jsonl、uart-status.txt、manifest.json、before.jpg和after.jpg。后续恢复照明/取景后再核对屏幕，并由iPhone实际发起另一任务验收。
 
 首次iOS云端构建：[39284834109](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)，对应源码提交`d4a854ea9e70053d3a33d6bbaca9f18ec43fe914`。触发后处于queued，尚无运行器和构建产物；[GitHub官方状态页](https://www.githubstatus.com/)同时报告Actions、Pages和Webhooks服务降级（事件始于2026-10-19 15:49 UTC，北京时间23:49），可能导致本次排队延迟。该状态不代表检查或macOS构建已通过。
+
+## 2026-10-20白天：真实IPA及实物核对
+
+工作流现为completed/success，Linux检查、Xcode选择、Flutter编译、IPA打包和产物上传步骤全部成功。实际工具链为Xcode26.2（17C52）、Flutter3.38.10、Dart3.10.9。Ubuntu昨晚的等待进程未完成下载，白天已实际下载、核验并生成私人配置包。
+
+| 项目 | 结果 |
+| --- | --- |
+| 版本与平台 | 0.1.0（1），dev.elink.elinkFrame，arm64，iPhoneOS，最低iOS13.0，SDK iPhoneOS26.2 |
+| 公开IPA | 6834406字节，SHA-256为1ac04b7fd4b05555755bdf8587d8d71ba7aeea34847803232d2bdda2fac3f057 |
+| 产物ZIP | GitHub artifact 12202807285；SHA-256与GitHub提供的81984c01b47bae101d28482e2430eed3470a5624f297fd4454040f3fd4ca09c2一致 |
+| 公共配置 | 注册的connection.json为空；无embedded.mobileprovision，尚未个人签名 |
+| 自用IPA | 本地.private/ios/mojian-configured.ipa，6834472字节，权限600；连接资料与现有私人配置一致 |
+| 归档一致性 | SHA、ZIP CRC、文件列表、可执行权限全部校验；仅连接资源改变，其余文件内容逐项相同 |
+| 真机安装 | iPhone暂未连接，未进行Apple登录、签名、安装或独立启动验证 |
+
+详细本地记录：`artifacts/ios/local-verification.json`、`artifact-verification.json`及`toolchain.txt`。公开源IPA和私人配置包均已落盘，不依赖Actions产物保留期。
+
+白天补拍`artifacts/public-20261020/daylight.jpg`，屏幕完整进入画面；对照同目录preview.png，黄色圆形、绿色三角形、六色色块顺序和边界均对应。面板物理竖放，内容相对源预览转过90度。用户确认夜间无照明，因此保留黑色夜间照片作为当时记录，以白天实拍补充目视核对。本次照片核对的是昨晚公网脚本任务`09738f8f3bbce986adb2c63fcb20e6e3`，未声称手机已发起刷新。
+
+iPhone签名安装与手机实际操作在能够USB连接后继续，今天不执行该环节；实际流程见[iOS安装说明](ios-installation.md)。
+
+红米APK同步更新到与iOS构建相同的mobile源码树`390a864a96d509bbbea93c941c30f20c0ae1f5b5`，版本0.1.0（1）、API24起、Flutter运行时和AOT包含armeabi-v7a/arm64-v8a。`apksigner verify`通过，前后签名证书SHA-256一致；新版30816383字节，SHA-256为`64a6d866674a9eab38faff1f9e2bc377069275d1adf97029235079106f68f0cb`。本地`artifacts/SHA256SUMS`与`android-verification.json`已更新，旧APK备份保存在`.private/android/previous.apk`。红米实际安装、运行和刷新仍待手机连接后验证。
