@@ -1,6 +1,6 @@
 # MVP 验证记录
 
-更新：2026-10-20。范围：红米Android、iPhone iOS共用工程；本地Ubuntu与GitHub macOS构建。尚未连接手机，真机安装及手机操作待验收。
+更新：2026-10-20。范围：红米Android、iPhone iOS共用工程；本地Ubuntu与GitHub macOS构建。iPhone已连接、通过USB配对并成功签名安装，正在处理首次信任/开发者模式，真机运行及手机操作待验收。
 
 ## 已验证
 
@@ -14,7 +14,8 @@
 | 算法参考 | 固定32×16 RGB输入，Burkes六色量化及打包与原Python逐字节一致 |
 | 预览一致性 | 800×480、192000字节、全部色码合法，PNG像素来自同一打包数据 |
 | Android构建 | 共享代码已同步构建个人签名release，30816383字节，Flutter运行时及AOT为ARM32/64，签名验证通过且证书保持一致 |
-| iOS构建 | GitHub Linux检查和macOS/Xcode26.2构建成功，arm64真机Release 0.1.0（1），已下载并注入私人配置，签名安装待接线 |
+| iOS构建与安装 | GitHub Linux检查和macOS/Xcode26.2构建成功，arm64真机Release 0.1.0（1），已下载、注入私人配置并在Ubuntu免费签名安装；USB查询与实际描述文件核对通过 |
+| iPhone USB | iPhone15Pro/iOS26.7.1已连接、信任并通过配对验证；读取到ProductType=iPhone16,1 |
 | ESP构建/烧录 | ESP-IDF5.5.5通过，约889KB，4MiB factory分区；Wi-Fi连接成功 |
 | 服务器服务 | SSH正常，systemd三服务active；内部API与MQTT连接正常；HTTPS私有CA验证通过 |
 | 真实云端刷屏 | 临时SSH与最终公网直连均成功；公网任务34.77秒，UART整图CRC一致 |
@@ -45,7 +46,7 @@
 
 - 手机Wi-Fi/蜂窝网络及实际操作发起的刷新；公网脚本刷屏、UART与白天实物核对已通过。
 - 红米安装、系统选图器、EXIF/透明/大图、多指手势、前后台恢复、真实耗时及App到屏幕全流程；当前`adb devices`为空。
-- iPhone签名安装、相册/HEIC、Keychain、TLS、手势、预览与实际刷屏；macOS真机Release构建已通过。
+- iPhone首次信任/开发者模式、独立启动、相册/HEIC、Keychain、TLS、手势、预览与实际刷屏；真机Release构建及签名安装已通过。
 - 真正断电发生于刷屏中、面板BUSY故障等破坏性硬件场景未制造；当前依赖代码状态机与服务端异常测试，不声称已经实机覆盖。
 
 后续变更与额外硬件检查结果补记于本文末尾，避免将模拟/中转验证描述为公网或手机验收。
@@ -102,6 +103,24 @@ GitHub设备授权完成，并以`GET /user`确认登录为`oceanfree-apple`；�
 
 白天补拍`artifacts/public-20261020/daylight.jpg`，屏幕完整进入画面；对照同目录preview.png，黄色圆形、绿色三角形、六色色块顺序和边界均对应。面板物理竖放，内容相对源预览转过90度。用户确认夜间无照明，因此保留黑色夜间照片作为当时记录，以白天实拍补充目视核对。本次照片核对的是昨晚公网脚本任务`09738f8f3bbce986adb2c63fcb20e6e3`，未声称手机已发起刷新。
 
-iPhone签名安装与手机实际操作在能够USB连接后继续，今天不执行该环节；实际流程见[iOS安装说明](ios-installation.md)。
+上述为早上未接线时的记录；当日后续已开始USB安装，见本文下一节。实际流程见[iOS安装说明](ios-installation.md)。
 
 红米APK同步更新到与iOS构建相同的mobile源码树`390a864a96d509bbbea93c941c30f20c0ae1f5b5`，版本0.1.0（1）、API24起、Flutter运行时和AOT包含armeabi-v7a/arm64-v8a。`apksigner verify`通过，前后签名证书SHA-256一致；新版30816383字节，SHA-256为`64a6d866674a9eab38faff1f9e2bc377069275d1adf97029235079106f68f0cb`。本地`artifacts/SHA256SUMS`与`android-verification.json`已更新，旧APK备份保存在`.private/android/previous.apk`。红米实际安装、运行和刷新仍待手机连接后验证。
+
+## 2026-10-20：iPhone配对与首次签名尝试
+
+手机USB连接、解锁并信任Ubuntu。此前usbmuxd虽显示active，但本地socket队列阻塞，设备列表查询失败；恢复服务后`idevicepair validate`成功，读取到ProductType=iPhone16,1、ProductVersion=26.7.1。设备标识仅保留在本机私有目录。
+
+iloader2.3.10已在桌面运行，用户在本机窗口登录Apple账号后导入已配置IPA。首次尝试在列举开发者团队时失败：`Failed to get anisette headers`，`new.ani.sidestore.io/v3/get_headers`返回HTTP502。此时查询未发现本项目已安装，不能记为签名或安装成功。
+
+已核对该版本官方备用服务，并从Ubuntu进行不带账号的基础探测；三个Mac服务均有HTTP响应，空headers请求返回缺少identifier的预期错误，尚未验证完整签名。已请用户先切换`Jkcoxson (Mac)`重试，同类502时再试`StikStore (Mac)`。未删除配对或撤销证书。Apple密码与验证码不经过聊天、命令行或仓库。
+
+用户随后报告同类502，报错网址仍为`new.ani.sidestore.io/v3/client_info`；本机只读取非敏感服务偏好，确认已保存为`ani3.stikstore.app`。核对官方账号源码后确认服务在登录时绑定，而签名复用原会话，因此更正操作为切换后退出、重新登录再导入IPA。此时尚不能说备用服务的完整认证也已尝试失败。
+
+随后针对相同的`/v3/client_info`接口匿名复查：Jkcoxson (Mac)及StikStore (Mac)均返回HTTP200和`client_info`、`user_agent`字段；旧SideStore地址出现连接错误。脱敏探测结果保存在本机`.private/ios/anisette-probe.json`，完整登录、签名和安装仍待重试结果。
+
+安装前公网复查仍为API正常、MQTT已连接、ESP在线且空闲，最近任务仍是此前脚本成功任务。已保存本次手机测试前的摄像头基准图`artifacts/iphone-20261020/before.jpg`；真正手机选图、刷新及之后的实拍尚待安装完成。
+
+切换StikStore (Mac)并重新登录后，用户报告安装成功并看到墨间图标；USB查询独立确认应用版本0.1.0、构建1已安装。只复制本项目的签名描述文件并解码，实际application-identifier与已安装Bundle ID匹配。有效期实测7天，2026-10-27 20:35（北京时间）到期，建议10月25日续签。Team、改写后的Bundle ID、描述文件和到期时间保存在本机`.private/ios/signing-record.json`及profiles目录，未公开。
+
+手机首次打开提示开发者信任或开发者模式，已提供对应设置路径；独立运行和手机发起的刷新仍未记为通过。

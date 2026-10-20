@@ -5,7 +5,7 @@ Flutter App 选图、缩放/拖动/任意角度旋转、固定 5:3 裁剪，点�
 ## 当前交付
 
 - Android：`artifacts/mojian-android.apk`，个人密钥签名release约30.8MB，支持ARM32/ARM64、Android7/API24及以上。已同步构建到与iOS相同的共享代码，签名证书保持一致；预置私人连接配置，**只供私人分发**。红米尚未连接，真机测试待完成。
-- iOS：[首次云端构建](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，Release 0.1.0（1）、arm64真机IPA约6.5MiB；已下载核验，并在Ubuntu生成含私人连接配置的自用IPA。iPhone尚未接线，签名安装及真机测试待完成。
+- iOS：[首次云端构建](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，Release 0.1.0（1）、arm64真机IPA约6.5MiB；已下载核验、注入私人配置，并在Ubuntu免费签名安装到iPhone15Pro/iOS26.7.1。USB查询及实际描述文件核对通过，签名10月27日20:35（北京时间）到期；首次信任/开发者模式及运行验收待完成。
 - 云端：HTTPS API、MQTTS、SQLite及systemd自启动已部署；公网443/8883、ESP在线和脚本刷屏均通过，耗时34.77秒，UART整图CRC一致。
 - 硬件：2026-10-20白天实拍已核对黄色圆形、绿色三角形和六色色块，与公网任务预览对应。接下来验收手机实际选图、编辑及发起刷新。
 

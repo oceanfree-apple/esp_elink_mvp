@@ -1,6 +1,6 @@
 # iOS云端构建与Ubuntu USB安装
 
-更新：2026-10-20。设备：iPhone 15 Pro / iOS 26.7.1。用户已授权先做所有不依赖接线的准备。
+更新：2026-10-20。设备：iPhone 15 Pro / iOS 26.7.1。手机已USB连接、解锁并信任Ubuntu，配对验证成功；正在处理个人签名安装。
 
 ## 已完成与待完成
 
@@ -12,8 +12,11 @@
 | IPA打包、下载、注入 | 已生成真实自用IPA；产物ZIP摘要、IPA摘要、arm64/iPhoneOS、空公开配置、私人配置及资源/权限一致性验证通过 |
 | GitHub授权、发布、首次云端构建 | [首次构建39284834109](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，版本0.1.0（1），未签名IPA约6.5MiB，已保留本地 |
 | Ubuntu安装环境 | 已安装官方iloader2.3.10、usbmuxd及libimobiledevice工具；动态库齐全；USB服务已启动 |
-| iPhone安装、Keychain、HEIC、实际刷新 | 等待接线；当前没有连接iPhone，不能记为已通过 |
-| 公网HTTPS/MQTTS | 公网脚本刷屏34.77秒成功，UART整图CRC一致；白天实拍与任务预览对应，iPhone实际发起的刷新待接线后验收 |
+| iPhone USB配对 | 已成功读取iPhone16,1和iOS26.7.1，配对验证通过；已恢复此前阻塞的usbmuxd服务 |
+| iPhone签名安装 | 切换StikStore (Mac)并重新登录后成功；USB查询确认墨间0.1.0（1）已安装，实际签名描述文件匹配应用 |
+| 免费签名有效期 | 实测7天，2026-10-27 20:35（北京时间）到期；建议10月25日完成覆盖续签，实际Team/改写后的Bundle ID保存在本机私有记录 |
+| Keychain、HEIC、手机实际刷新 | 等待安装完成，不能记为已通过 |
+| 公网HTTPS/MQTTS | 公网脚本刷屏34.77秒成功，UART整图CRC一致；白天实拍与任务预览对应，iPhone实际发起的刷新待安装后验收 |
 
 ## 接线前的构建与配置
 
@@ -55,7 +58,7 @@ python3 tools/prepare_ios.py
 
 2026-10-20早上已完成实际下载和注入。昨晚的本地等待进程没有持续完成下载，今后从文件、摘要和工作流状态核实结果，不将启动等待进程等同于产物已准备。当前公开原包、自用IPA均保存在Ubuntu，不依赖远程产物保留期。
 
-当前接线时间待定，今天不进行Apple登录、配对或安装。需要接线时直接使用上述自用IPA；真正安装、独立启动、Keychain和iOS26.7.1兼容性仍待实机验证。
+当日后续手机已接线，配对通过。首次签名因认证辅助服务502而失败；切换StikStore (Mac)、退出并重新登录后，沿用上述自用IPA成功安装，无需重新运行CI。USB查询确认墨间0.1.0（1）已安装；实际描述文件与应用标识匹配。手机首次打开提示开发者信任或开发者模式，正在按提示处理，独立启动、Keychain和iOS26.7.1兼容性仍待实机验证。
 
 ## iPhone接线后的安装
 
@@ -72,13 +75,23 @@ python3 tools/prepare_ios.py
    ideviceinfo -k ProductVersion
    ```
 
-   无设备时先检查线材和USB口；服务未运行时用`sudo systemctl start usbmuxd`。目前尚未接线或验证配对。
+   无设备时先检查线材和USB口；服务未运行时用`sudo systemctl start usbmuxd`。本机已验证配对成功；此前服务虽显示active但通信阻塞，恢复服务后设备查询正常，不需要删除手机配对记录。
 
 3. 在Ubuntu桌面启动`iloader`。由用户在其窗口中登录Apple账号，完成必要的双重认证，不将账号密码或验证码放入项目、命令行或Actions。选择导入自己的IPA，文件为`.private/ios/mojian-configured.ipa`。工具处理个人证书、描述文件、框架签名与USB安装。
 4. 按手机实际提示开启“设置 → 隐私与安全性 → 开发者模式”，可能需要重启；如出现开发者信任提示，在“设置 → 通用 → VPN与设备管理”完成信任。入口和提示以手机实际系统为准。
 5. 在桌面独立打开“墨间”。首次启动不填写URL、令牌或项目账号；应能查询云端并显示相框状态。再验证相册JPEG/PNG/HEIC、EXIF方向、双指缩放/旋转、预览和前后台恢复。
 
-同一Apple账号如已有开发证书，先核对再使用，避免为安装本项目随意撤销其他应用仍在使用的证书。当前仅验证了iloader可启动及依赖完整；Apple认证、免费签名和iOS26.7.1安装必须接线后实测。[官方说明支持导入任意IPA](https://github.com/nab138/iloader#features)。[2.3.10发布说明](https://github.com/nab138/iloader/releases/tag/v2.3.10)提到当周Apple认证不稳定并更新认证服务列表，实际错误需要保留脱敏日志后处理。
+同一Apple账号如已有开发证书，先核对再使用，避免为安装本项目随意撤销其他应用仍在使用的证书。本机USB配对、Apple登录、免费签名和iOS26.7.1安装均已成功；尚待手机完成首次信任/开发者模式后验证运行。[官方说明支持导入任意IPA](https://github.com/nab138/iloader#features)。[2.3.10发布说明](https://github.com/nab138/iloader/releases/tag/v2.3.10)提到当周Apple认证不稳定并更新认证服务列表，实际错误需要保留脱敏日志后处理。
+
+### Anisette服务返回502
+
+本次错误链为`Failed to list developer teams → Failed to get anisette headers → HTTP 502`，地址为`https://new.ani.sidestore.io/v3/get_headers`。失败发生在获取开发者团队所需的认证数据阶段；该错误本身不能说明IPA内容或USB安装失败。
+
+点`Dismiss`关闭错误框，在主界面下方`Settings → Anisette Server`先选择`Jkcoxson (Mac)`，再在Apple ID区域`Sign out`并重新登录，最后`Import IPA`导入同一份已配置IPA；若同样502，再尝试`StikStore (Mac)`并重复退出、登录步骤。两者均来自[当前版本官方预设列表](https://github.com/nab138/iloader/blob/v2.3.10/src/pages/Settings.tsx)，不是自行寻找的第三方地址。本机匿名基础探测时三个Mac服务均能响应，但不含账号的空请求只验证服务响应，不能代替实际认证与签名成功。
+
+必须重新登录才能让新服务用于当前会话：[账号源码](https://github.com/nab138/iloader/blob/v2.3.10/src-tauri/src/account.rs)在登录时创建认证Provider并绑定URL，导入IPA则复用该会话。本次界面偏好已保存为StikStore，但再次报错仍访问`new.ani.sidestore.io/v3/client_info`，说明只改下拉框的重试仍使用旧会话，不能据此判定备用服务也已失败。
+
+先切换服务重试；只有后续错误明确指向旧Anisette状态时，再考虑`Reset Anisette State`并由用户在本机重新完成认证。不要因此删除配对、撤销证书或卸载其他应用。
 
 ## 公网检查与真正的刷新验收
 
@@ -97,6 +110,8 @@ python3 tools/cloud_check.py --ssh
 ## 免费续签与覆盖安装
 
 首次成功后记录实际签名Team、Bundle ID和到期时间到`.private/ios/`。保持同一Apple账号及签名应用标识，每5～6天USB连接Ubuntu，用同一份已配置IPA在iloader中重新签名并覆盖安装；无代码改动无需重新运行CI。不要先卸载应用。覆盖安装后验证独立启动、自动连接和Keychain仍正常，再记录新的到期时间。
+
+本次已完成实际签名记录：`.private/ios/signing-record.json`，仅复制并解析本项目的描述文件，未读取其他应用的描述文件。免费描述文件有效期为7天，2026-10-27 20:35（北京时间）到期，建议2026-10-25续签。iloader已改写Bundle ID，后续以私有记录中的实际标识为准；同账号覆盖安装是否保持标识及Keychain仍需续签实测。
 
 公开Actions产物可能已过期，因此本地保留最新公开原包和已配置IPA。认证资料和工具日志位于用户本机；分享诊断前过滤密码、验证码、私钥、令牌及设备配对资料。
 
