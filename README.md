@@ -5,9 +5,9 @@ Flutter App 选图、缩放/拖动/任意角度旋转、固定 5:3 裁剪，点�
 ## 当前交付
 
 - Android：`artifacts/mojian-android.apk`，个人密钥签名release约30.8MB，支持ARM32/ARM64、Android7/API24及以上。已同步构建到与iOS相同的共享代码，签名证书保持一致；预置私人连接配置，**只供私人分发**。红米尚未连接，真机测试待完成。
-- iOS：[首次云端构建](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，Release 0.1.0（1）、arm64真机IPA约6.5MiB；已下载核验、注入私人配置，并在Ubuntu免费签名安装到iPhone15Pro/iOS26.7.1。USB查询及实际描述文件核对通过，签名10月27日20:35（北京时间）到期；首次信任/开发者模式及运行验收待完成。
+- iOS：[首次云端构建](https://github.com/oceanfree-apple/esp_elink_mvp/actions/runs/39284834109)成功，Release 0.1.0（1）、arm64真机IPA约6.5MiB；已在Ubuntu免费签名安装到iPhone15Pro/iOS26.7.1。用户确认App正常使用；手机实际刷新33.85秒成功，设备CRC与云端一致，摄像头实拍与该任务预览对应。签名10月27日20:35（北京时间）到期，建议10月25日续签。
 - 云端：HTTPS API、MQTTS、SQLite及systemd自启动已部署；公网443/8883、ESP在线和脚本刷屏均通过，耗时34.77秒，UART整图CRC一致。
-- 硬件：2026-10-20白天实拍已核对黄色圆形、绿色三角形和六色色块，与公网任务预览对应。接下来验收手机实际选图、编辑及发起刷新。
+- 硬件：公网脚本任务和iPhone实际提交的照片均已完成刷屏、UART校验及摄像头目视核对；iPhone到实物屏幕的主流程已通过。
 
 确认方案见[MVP方案](docs/mvp-plan.md)及[iPhone免费自测计划](docs/ios-free-testing-plan.md)。实际操作见[iOS构建与USB安装](docs/ios-installation.md)，实测与未验证项见[验证记录](docs/verification.md)，接口及部署见[接口与运维](docs/operations.md)。
 
@@ -64,7 +64,7 @@ python3 tools/prepare_ios.py
 iloader
 ```
 
-Apple账号只在Ubuntu的iloader窗口登录，不提供给Actions。免费签名按每5～6天USB续签安排；相册JPEG/PNG/HEIC、EXIF、手势、预览性能、Keychain、TLS和真实刷新需要接线后逐项验收。
+Apple账号只在Ubuntu的iloader窗口登录，不提供给Actions。免费签名按每5～6天USB续签安排；iPhone基本运行及真实刷新已通过，格式/手势专项、预览性能、网络切换和覆盖续签结果见[验证记录](docs/verification.md)。
 
 ## 算法约定
 

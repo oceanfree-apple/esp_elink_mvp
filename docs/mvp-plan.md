@@ -2,13 +2,13 @@
 
 确认日期：2026-10-19。目标：选图 → 编辑裁剪 → 手机本地六色抖动预览 → HTTPS 上传 → MQTT 通知 ESP → HTTPS 下载 → 刷屏及结果回报。
 
-整体实施补充方案：[iPhone免费自测计划](ios-free-testing-plan.md)。用户已确认实施：iPhone主力自测、GitHub免费macOS构建、Ubuntu本地自动注入连接配置后签名、USB安装和续签；不采用SideStore或无线安装。先完成不依赖iPhone连接的开发、发布和构建准备，实际安装及手机闭环等用户接线后进行。
+整体实施补充方案：[iPhone免费自测计划](ios-free-testing-plan.md)。用户已确认实施：iPhone主力自测、GitHub免费macOS构建、Ubuntu本地自动注入连接配置后签名、USB安装和续签；不采用SideStore或无线安装。构建准备、USB安装和首次手机实际刷新均已完成，续签及专项按记录继续验证。
 
-2026-10-20进度：iOS云端Release构建、IPA下载核验、本地私人配置和免费签名安装已完成；红米APK已同步共享代码并保留原签名；公网脚本刷屏、串口CRC及白天实拍核对通过。iPhone已USB配对，切换认证辅助服务并重新登录后安装成功，实际签名描述文件匹配。首次信任/开发者模式、独立运行和手机实际操作尚待验收，详见[验证记录](verification.md)。
+2026-10-20进度：iOS云端Release构建、IPA下载核验、本地私人配置和免费签名安装已完成；红米APK已同步共享代码并保留原签名。用户确认iPhone App、云端及墨水屏正常，手机实际任务33.85秒成功，UART CRC与云端数据一致，摄像头实拍与任务预览对应，主流程闭环通过。红米真机、格式/网络专项和覆盖续签保留待验证，详见[验证记录](verification.md)。
 
 ## 范围与硬件
 
-- Flutter 共用 Android/iOS 代码；iPhone15Pro（iOS26.7.1）改为主力自测机，红米保留安卓兼容性验收，移除Mate30。GitHub公开仓库的macOS/Xcode未签名Release构建及Ubuntu免费个人签名、USB安装已通过，不要求购买本地Mac；真机独立运行与手机操作仍待完成。
+- Flutter 共用 Android/iOS 代码；iPhone15Pro（iOS26.7.1）改为主力自测机，红米保留安卓兼容性验收，移除Mate30。GitHub公开仓库的macOS/Xcode未签名Release构建、Ubuntu免费个人签名、USB安装及iPhone实际刷屏已通过，不要求购买本地Mac。
 - 个人单屏，不做账户注册、多屏、手机配网、图库、轮播或 OTA。
 - ESP32-S3，16MB PSRAM、32MB Flash；GDEP073E01，800×480，六色；沿用 esp_elink_uart 的驱动、接线、Wi-Fi 与串口协议。
 
